@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <NoWarn>$(NoWarn);CS0618;SYSLIB0023;CS1591</NoWarn>
+  </PropertyGroup>
+</Project>
