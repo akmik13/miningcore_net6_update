@@ -794,6 +794,11 @@ public partial class AdminNotifications
     public bool NotifyPaymentSuccess { get; set; }
 }
 
+public partial class NotificationProcessingConfig
+{
+    public bool Enabled { get; set; }
+}
+
 public partial class NotificationsConfig
 {
     public bool Enabled { get; set; }
@@ -801,6 +806,7 @@ public partial class NotificationsConfig
     public EmailSenderConfig Email { get; set; }
     public PushoverConfig Pushover { get; set; }
     public AdminNotifications Admin { get; set; }
+    public NotificationProcessingConfig NotificationProcessing { get; set; }
 }
 
 public class ApiRateLimitConfig

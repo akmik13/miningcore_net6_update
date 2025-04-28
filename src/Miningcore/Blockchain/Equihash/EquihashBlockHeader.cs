@@ -91,10 +91,14 @@ public class EquihashBlockHeader : IBitcoinSerializable
         stream.ReadWrite(ref nVersion);
         stream.ReadWrite(ref hashPrevBlock);
         stream.ReadWrite(ref hashMerkleRoot);
-        stream.ReadWrite(ref hashReserved);
+        stream.ReadWriteBytes(ref hashReserved);
         stream.ReadWrite(ref nTime);
         stream.ReadWrite(ref nBits);
-        stream.ReadWrite(ref nonceBytes);
+        stream.ReadWriteBytes(ref nonceBytes);
+
+        // Если чтение, то обновляем nNonce
+        if (!stream.Serializing)
+            nNonce = nonceBytes.ToHexString();
     }
 
     #endregion
