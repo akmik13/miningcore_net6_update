@@ -63,9 +63,9 @@ public class WebSocketNotificationsRelay : WebSocketHandler
         {
             var json = ToJson(type, notification);
 
-            var msg = new Message
+            var msg = new WebSocketManager.Common.Message
             {
-                MessageType = MessageType.TextRaw,
+                MessageType = WebSocketManager.Common.MessageType.Text,
                 Data = json
             };
 

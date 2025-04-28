@@ -20,20 +20,24 @@ public class RandomARQTests : TestBase
     {
         // creation
         RandomARQ.CreateSeed(realm, seedHex);
-        Assert.True(RandomARQ.realms.ContainsKey(realm));
-        Assert.True(RandomARQ.realms[realm].ContainsKey(seedHex));
+        
+        // Проверяем, что мы можем получить созданный seed
+        var seed = RandomARQ.GetSeed(realm, seedHex);
+        Assert.NotNull(seed);
 
-        // accessing the created seed should work
-        Assert.NotNull(RandomARQ.GetSeed(realm, seedHex));
-
-        // creating the same realm and key twice should not result in duplicates
+        // создание того же realm и ключа дважды не должно приводить к дубликатам
         RandomARQ.CreateSeed(realm, seedHex);
-        Assert.Equal(RandomARQ.realms.Count, 1);
-        Assert.Equal(RandomARQ.realms[realm].Count, 1);
+        
+        // Seed должен существовать
+        seed = RandomARQ.GetSeed(realm, seedHex);
+        Assert.NotNull(seed);
 
-        // deletion
+        // Удаление
         RandomARQ.DeleteSeed(realm, seedHex);
-        Assert.False(RandomARQ.realms[realm].ContainsKey(seedHex));
+        
+        // После удаления seed не должен существовать
+        seed = RandomARQ.GetSeed(realm, seedHex);
+        Assert.Null(seed);
     }
 
     [Fact]

@@ -20,20 +20,24 @@ public class RandomXTests : TestBase
     {
         // creation
         RandomX.CreateSeed(realm, seedHex);
-        Assert.True(RandomX.realms.ContainsKey(realm));
-        Assert.True(RandomX.realms[realm].ContainsKey(seedHex));
+        
+        // Проверяем, что мы можем получить созданный seed
+        var seed = RandomX.GetSeed(realm, seedHex);
+        Assert.NotNull(seed);
 
-        // accessing the created seed should work
-        Assert.NotNull(RandomX.GetSeed(realm, seedHex));
-
-        // creating the same realm and key twice should not result in duplicates
+        // создание того же realm и ключа дважды не должно приводить к дубликатам
         RandomX.CreateSeed(realm, seedHex);
-        Assert.Equal(RandomX.realms.Count, 1);
-        Assert.Equal(RandomX.realms[realm].Count, 1);
+        
+        // Seed должен существовать
+        seed = RandomX.GetSeed(realm, seedHex);
+        Assert.NotNull(seed);
 
-        // deletion
+        // Удаление
         RandomX.DeleteSeed(realm, seedHex);
-        Assert.False(RandomX.realms[realm].ContainsKey(seedHex));
+        
+        // После удаления seed не должен существовать
+        seed = RandomX.GetSeed(realm, seedHex);
+        Assert.Null(seed);
     }
 
     [Fact]

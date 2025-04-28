@@ -52,10 +52,7 @@ public class AutofacModule : Module
             .AsImplementedInterfaces()
             .SingleInstance();
 
-        builder.RegisterInstance(new RecyclableMemoryStreamManager
-        {
-            ThrowExceptionOnToArray = true
-        });
+        builder.RegisterInstance(new RecyclableMemoryStreamManager());
 
         builder.RegisterType<StandardClock>()
             .AsImplementedInterfaces()

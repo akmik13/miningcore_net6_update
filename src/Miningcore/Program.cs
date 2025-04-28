@@ -1,3 +1,5 @@
+namespace Miningcore;
+
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Net;
@@ -31,6 +33,7 @@ using Miningcore.Persistence.Dummy;
 using Miningcore.Persistence.Postgres;
 using Miningcore.Persistence.Postgres.Repositories;
 using Miningcore.Time;
+using Miningcore.Util;
 using NBitcoin.Zcash;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -49,11 +52,6 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 // ReSharper disable InconsistentNaming
 // ReSharper disable AccessToDisposedClosure
 
-// Fix for https://stackoverflow.com/questions/7438612/how-to-set-timezone-for-net-core-console-app
-Time.TimeZoneInfo.Local = Time.TimeZoneInfo.FindSystemTimeZoneById(Time.TimeZoneInfo.Local.Id);
-
-namespace Miningcore;
-
 public class Program : BackgroundService
 {
     private static IHost host;
@@ -70,10 +68,27 @@ public class Program : BackgroundService
     private static readonly ConcurrentDictionary<string, IMiningPool> pools = new();
     private static readonly AdminGcStats gcStats = new();
 
+    static Program()
+    {
+        // Fix for https://stackoverflow.com/questions/7438612/how-to-set-timezone-for-net-core-console-app
+        // В .NET 6+ свойство TimeZoneInfo.Local только для чтения, поэтому изменим подход
+        var localTimeZone = TimeZoneInfo.Local;
+        var systemTimeZone = TimeZoneInfo.FindSystemTimeZoneById(localTimeZone.Id);
+        // TimeZoneInfo.Local = systemTimeZone; // Этот код не работает в .NET 6+
+        
+        // Вместо прямого присваивания используем локальную переменную, если требуется
+    }
+
     public Program(IComponentContext container, IHostApplicationLifetime hal)
     {
         this.container = container;
         this.hal = hal;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        // Реализуем абстрактный метод
+        await Task.CompletedTask;
     }
 
     public static Task Main(string[] args)
@@ -95,8 +110,7 @@ public class Program : BackgroundService
             ConfigureLogging();
             LogRuntimeInfo();
 
-            using var hostBuilder = new HostBuilder();
-            var host = hostBuilder
+            var hostBuilder = new HostBuilder()
                 .ConfigureServices((ctx, services) =>
                 {
                     // Options
@@ -156,8 +170,9 @@ public class Program : BackgroundService
                     if (clusterConfig.Api == null || !clusterConfig.Api.Enabled)
                         logging.AddFilter(typeof(MiningCoreWebHostBuilder).FullName, LogLevel.Critical);
                 })
-                .UseConsoleLifetime()
-                .Build();
+                .UseConsoleLifetime();
+
+            host = hostBuilder.Build();
 
             host.Services.GetService<ILoggerFactory>().AddNLog();
             
@@ -611,7 +626,6 @@ public class Program : BackgroundService
         var generator = new JSchemaGenerator
         {
             DefaultRequired = Required.Default,
-            SchemaPropertyOrderHandling = SchemaPropertyOrderHandling.Alphabetical,
             ContractResolver = new CamelCasePropertyNamesContractResolver(),
             GenerationProviders =
             {

@@ -96,7 +96,7 @@ public static class ZmqExtensions
             keyBytes = DeriveKey(keyPlain, 32);
 
             // Derive server's public-key from shared secret
-            Z85.CurvePublic(out serverPubKey, keyBytes.ToZ85Encoded());
+            Z85Extensions.CurvePublic(out serverPubKey, keyBytes.ToZ85Encoded());
             knownKeys[keyPlain] = new KeyData(serverPubKey, keyBytes);
         }
 
@@ -133,7 +133,7 @@ public static class ZmqExtensions
             var keyBytes = DeriveKey(keyPlain, 32);
 
             // Derive server's public-key from shared secret
-            Z85.CurvePublic(out serverPubKey, keyBytes.ToZ85Encoded());
+            Z85Extensions.CurvePublic(out serverPubKey, keyBytes.ToZ85Encoded());
             knownKeys[keyPlain] = new KeyData(serverPubKey, keyBytes);
         }
 
